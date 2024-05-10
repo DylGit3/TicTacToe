@@ -17,6 +17,7 @@ int main()
 	char currentPlayer = playerX;
 	int r = -1;
 	int c = -1;
+	char winner = ' ';
 
 	for (int i = 0; i < 9; ++i)
 	{
@@ -32,12 +33,82 @@ int main()
 			<< " " << board[2][0] << " | " << board[2][1] << " | " << board[2][2] << endl
 			<< "   |   |   " << endl;
 
+		if (winner != ' ')
+		{
+			break;
+		}
+
 		//get player input
 		cout << "Current Player is " << currentPlayer << endl;
-		cout << "Enter r c from 0-2 for row and column: ";
-		cin >> r >> c;
-
+		bool validInput = false;
+		while (!validInput)
+		{
+			cout << "Enter r c from 0-2 for row and column: ";
+			cin >> r >> c;
+			if (r < 0 || r > 2 || c < 0 || c > 2)
+			{
+				cout << "Invalid input, try again" << endl;
+				r = -1;
+				c = -1;
+				cin.clear(); //clean error flags
+				cin.ignore(10000, '\n');
+			}
+			else if (board[r][c] != ' ')
+			{
+				cout << "Tile is full, try again" << endl;
+				r = -1;
+				c = -1;
+				cin.clear(); //clean error flags
+				cin.ignore(10000, '\n');
+			}
+			else
+			{
+				validInput = true;
+			}
+		}
+		
 		board[r][c] = currentPlayer;
 		currentPlayer = (currentPlayer == playerX) ? playerO : playerX;
+
+		//check winners
+		
+		//rows - horizontal +
+		for (int r = 0; r < 3; ++r)
+		{
+			if (board[r][0] != ' ' && board[r][0] == board[r][1] && board[r][1] == board[r][2])
+			{
+					winner = board[r][0];
+					break;
+			}
+		}
+
+		//columns - vertical
+		for (int c = 0; c < 3; ++c)
+		{
+			if (board[0][c] != ' ' && board[0][c] == board[1][c] && board[1][c] == board[2][c])
+			{
+				winner = board[0][c];
+				break;
+			}
+		}
+
+		//diagonal
+		if (board[0][0] != ' ' && board[0][0] == board[1][1] && board[1][1] == board[2][2])
+		{
+			winner = board[0][0];
+		}
+		else if(board[0][2] != ' ' && board[0][2] == board[1][1] && board[1][1] == board[2][0])
+		{
+			winner = board[0][2];
+		}
+	}
+
+	if (winner != ' ')
+	{
+		cout << "Player " << winner << " is the winner!" << endl;
+	}
+	else
+	{
+		cout << "Tie!" << endl;
 	}
 }
